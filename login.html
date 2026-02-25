@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Eliane Beautys | Iniciar sesión</title>
+  <style>
+    body{font-family:system-ui;margin:0;background:#0b1220;color:#f9fafb;min-height:100vh;display:grid;place-items:center}
+    .card{width:min(520px,92vw);border:1px solid rgba(148,163,184,.25);border-radius:18px;background:rgba(148,163,184,.06);padding:18px}
+    h1{margin:0 0 12px;font-size:1.4rem}
+    label{display:block;margin:10px 0 6px;color:#cbd5e1;font-size:.95rem}
+    input{width:100%;padding:12px 12px;border-radius:12px;border:1px solid rgba(148,163,184,.25);background:rgba(2,6,23,.6);color:#f9fafb;outline:none}
+    button{width:100%;padding:12px;border-radius:12px;border:0;background:#22c55e;color:#071018;font-weight:900;cursor:pointer;margin-top:14px}
+    .row{display:flex;justify-content:space-between;gap:10px;margin-top:12px;flex-wrap:wrap}
+    a{color:#38bdf8;text-decoration:none;font-weight:800}
+    .muted{color:#9ca3af;font-size:.95rem}
+    .err{margin-top:10px;color:#fca5a5;font-weight:700;white-space:pre-wrap}
+  </style>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b1220">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+
+/* === Eliane Beautys Theme (non-breaking overrides) === */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Poppins:wght@300;400;500;600&display=swap');
+
+:root{
+  --eb-bg1:#fff7fb;
+  --eb-bg2:#fff1f7;
+  --eb-card:#ffffffcc;
+  --eb-text:#111827;
+  --eb-muted:#6b7280;
+  --eb-border:#f3d2e6;
+  --eb-accent:#e11d8a;
+  --eb-accent2:#f59e0b;
+  --eb-shadow:0 14px 40px rgba(17,24,39,.10);
+}
+
+html,body{height:100%}
+body{
+  font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif !important;
+  color:var(--eb-text) !important;
+  background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(225,29,138,.14), transparent 60%),
+    radial-gradient(900px 500px at 90% 20%, rgba(245,158,11,.12), transparent 55%),
+    linear-gradient(180deg,var(--eb-bg1),var(--eb-bg2)) !important;
+}
+
+a{color:var(--eb-accent) !important}
+h1,h2,h3{font-family:"Playfair Display",serif !important}
+
+.card, .panel, .course-card, .module-card, .video-card, .box{
+  background:var(--eb-card) !important;
+  border:1px solid var(--eb-border) !important;
+  box-shadow:var(--eb-shadow) !important;
+  backdrop-filter: blur(8px);
+}
+
+input,select,textarea{
+  background:#fff !important;
+  color:var(--eb-text) !important;
+  border:1px solid var(--eb-border) !important;
+}
+
+button, .btn, .primary{
+  background: linear-gradient(135deg, var(--eb-accent), #fb7185) !important;
+  color:white !important;
+  border:0 !important;
+  box-shadow: 0 10px 22px rgba(225,29,138,.25) !important;
+}
+
+button:hover, .btn:hover, .primary:hover{filter:brightness(1.03)}
+button:active, .btn:active, .primary:active{transform:translateY(1px)}
+
+.badge, .tag{
+  background: rgba(225,29,138,.10) !important;
+  color: var(--eb-accent) !important;
+  border: 1px solid var(--eb-border) !important;
+}
+
+header, .topbar, .nav{
+  background: transparent !important;
+  border-bottom: 1px solid rgba(243,210,230,.8) !important;
+}
+
+.small, .muted, .hint, .sub{
+  color: var(--eb-muted) !important;
+}
+
+</style>
+</head>
+<body>
+  <div class="card">
+    
+<div class="eb-brand" style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+  <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#e11d8a,#fb7185);display:grid;place-items:center;box-shadow:0 10px 22px rgba(225,29,138,.25)">
+    <span style="color:#fff;font-weight:700;letter-spacing:.5px">EB</span>
+  </div>
+  <div style="line-height:1">
+    <div style="font-family:'Playfair Display',serif;font-size:1.15rem">Eliane Beautys</div>
+    <div style="font-size:.85rem;color:var(--eb-muted)">Plataforma de Cursos</div>
+  </div>
+</div>
+<h1>Iniciar sesión</h1>
+    <div class="muted">Accede para ver tus cursos habilitados.</div>
+
+    <label>Correo</label>
+    <input id="email" type="email" placeholder="tucorreo@gmail.com" autocomplete="email" />
+
+    <label>Contraseña</label>
+    <input id="pass" type="password" placeholder="••••••••" autocomplete="current-password" />
+
+    <button id="btn">Entrar</button>
+    <div id="msg" class="err" style="display:none"></div>
+
+    <div class="row">
+      <span class="muted">¿No tienes cuenta? <a href="register.html">Crear cuenta</a></span>
+      <a href="index.html">Volver</a>
+    </div>
+  </div>
+
+<script>
+
+  const API_URL = "https://eliane-beautys-proxy-4wlw.vercel.app/api";
+
+  function jsonp(action, payload) {
+    return new Promise((resolve, reject) => {
+      const cb = "cb_" + Math.random().toString(36).slice(2);
+      const params = new URLSearchParams();
+      params.set("action", action);
+      Object.entries(payload || {}).forEach(([k,v]) => {
+        if (v === undefined || v === null) return;
+        params.set(k, String(v));
+      });
+      params.set("callback", cb);
+
+      const script = document.createElement("script");
+      script.src = API_URL + "?" + params.toString();
+      script.async = true;
+
+      window[cb] = (data) => {
+        cleanup();
+        resolve(data);
+      };
+
+      function cleanup() {
+        try { delete window[cb]; } catch(e) { window[cb] = undefined; }
+        if (script.parentNode) script.parentNode.removeChild(script);
+      }
+
+      script.onerror = () => {
+        cleanup();
+        reject(new Error("No se pudo conectar (JSONP/CORS)."));
+      };
+
+      document.body.appendChild(script);
+    });
+  }
+
+
+  function showErr(text) {
+    const el = document.getElementById("msg");
+    el.style.display = "block";
+    el.textContent = text;
+  }
+
+  document.getElementById("btn").onclick = async () => {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("pass").value;
+
+    if (!email || !password) return showErr("Completa correo y contraseña.");
+
+    try {
+      const r = await jsonp("login", { email, password });
+      if (!r.ok) return showErr(r.error || "Error de login");
+
+      sessionStorage.setItem("pasir_token", r.token);
+      sessionStorage.setItem("pasir_email", email);
+
+      // Intentar obtener nombre y guardarlo (para menú)
+      try {
+        const me = await jsonp("me", { token: r.token });
+        const nm = (me.user && (me.user.name || me.user.nombre)) || me.name || "";
+        if (nm) sessionStorage.setItem("pasir_name", nm);
+        const em = (me.user && (me.user.email || me.user.correo)) || me.email || "";
+        if (em) sessionStorage.setItem("pasir_email", em);
+      } catch(e) {}
+
+      location.href = "account.html";
+    } catch (e) {
+      showErr(e.message);
+    }
+  };
+</script>
+
+  <script>
+  // PWA: registrar Service Worker
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
