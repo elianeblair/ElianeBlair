@@ -1,0 +1,23 @@
+{
+  "name": "Eliane Beautys",
+  "short_name": "Eliane",
+  "description": "Plataforma de cursos Eliane Beautys",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff6fb",
+  "theme_color": "#f12585",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
