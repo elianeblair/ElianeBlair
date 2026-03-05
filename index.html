@@ -246,7 +246,32 @@ footer {
       header{ padding-top: 48px; }
     }
 
-  </style>
+  
+.pack-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.6rem;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:.2rem .6rem;
+  border-radius:999px;
+  background: rgba(241,37,133,.10);
+  border: 1px solid rgba(241,37,133,.22);
+  color:#f12585;
+  font-weight:800;
+  font-size:.78rem;
+}
+.pack-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+</style>
 
 <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f12585">
@@ -309,130 +334,70 @@ footer {
   </header>
 
   <main>
-    <h2 class="packs-title">Elige tu experiencia ideal</h2>
-    <p class="packs-subtitle">
-      Escríbeme por WhatsApp para reservar tu cupo, resolver dudas y coordinar horarios.
-    </p>
+    <h2 class="packs-title">The Beautys Facial Ritual</h2>
+    <p class="packs-subtitle">Programa online • Acceso inmediato • Ritual femenino para una piel más firme y luminosa.</p>
 
-        <section id="packs" class="packs-grid">
+        
+<section id="packs" class="packs-grid">
 
-      <!-- PAC 1 -->
-      <article class="pack-card">
-        <img src="img/pac_grupal.png" class="pack-img" alt="Clases en vivo grupales" loading="lazy">
+  <article class="pack-card" id="productRitual">
+    <img src="img/ritual_facial.jpg" class="pack-img" alt="The Beautys Facial Ritual" loading="lazy">
 
-        <div class="pack-top">
-          <div class="pack-label">PAC-1</div>
-          <div class="badge">Vivo grupal</div>
-        </div>
+    <div class="pack-top">
+      <div class="pack-label">Programa online</div>
+      <div class="badge">Acceso 1 año</div>
+    </div>
 
-        <div class="pack-name">Clases en vivo grupales</div>
-        <div class="pack-price">S/ 50 <span style="font-size:.95rem;color:var(--muted);font-weight:800;">• 2 meses</span></div>
+    <div class="pack-name">The Beautys Facial Ritual</div>
 
-        <div class="pack-section-title">✨ Incluye</div>
-        <ul class="pack-list">
-          <li>Masajes faciales que reafirmam y rejuvenecen</li>
-          <li>Mascarillas naturales que aclaran y nutren</li>
-          <li>Rutinas fáciles para hacer en casa (según tu tipo de piel)</li>
-        </ul>
+    <div class="pack-price">
+      Acceso actual: S/ 50
+      <span style="display:block;font-size:.95rem;color:var(--muted);font-weight:800;margin-top:.15rem;">
+        Precio oficial: <span style="text-decoration:line-through;">S/ 90</span> • Pago único • Sin mensualidades
+      </span>
+    </div>
 
-        <div class="pack-section-title">📅 Horario</div>
-        <p class="pack-text"><strong>Inicio:</strong> 23 de diciembre · <strong>Días:</strong> Mar • Jue • Sáb</p>
+    <div class="pack-text">
+      Es un programa online donde aprenderás a hacer masajes faciales y mascarillas naturales para mejorar la apariencia de tu piel.
+    </div>
 
-        <hr class="pack-divider" />
-        <a class="btn-whatsapp" href="https://wa.link/kp14zk" target="_blank" rel="noopener noreferrer">
-          💖 Quiero vivir esta experiencia
-        </a>
-      </article>
+    <div class="pack-section-title">✨ Este ritual está diseñado para ayudarte a</div>
+    <ul class="pack-list">
+      <li>Tener la piel más firme</li>
+      <li>Suavizar líneas de expresión</li>
+      <li>Reducir inflamación del rostro</li>
+      <li>Iluminar tu piel naturalmente</li>
+      <li>Verte más descansada y saludable</li>
+    </ul>
 
-      <!-- PAC 2 -->
-      <article class="pack-card">
-        <img src="img/pac_personalizado.png" class="pack-img" alt="Clases personalizadas 1 a 1" loading="lazy">
+    <div class="pack-section-title">💎 ¿Qué incluye?</div>
+    <ul class="pack-list">
+      <li>12 clases completas (masaje + mascarilla en cada una)</li>
+      <li>3 clases de puro masaje facial</li>
+      <li>1 clase para crear tu rutina ideal día y noche</li>
+      <li>1 clase con tips de belleza y jugos naturales</li>
+    </ul>
 
-        <div class="pack-top">
-          <div class="pack-label">PAC-2</div>
-          <div class="badge">1:1</div>
-        </div>
+    <div class="pack-section-title">📲 Modalidad</div>
+    <ul class="pack-list">
+      <li>100% online</li>
+      <li>Acceso por 1 año</li>
+      <li>Puedes ver las clases las veces que quieras</li>
+      <li>Pago único, sin mensualidades</li>
+    </ul>
 
-        <div class="pack-name">Clases personalizadas (1 a 1)</div>
-        <div class="pack-price">S/ 80 <span style="font-size:.95rem;color:var(--muted);font-weight:800;">• oferta especial</span></div>
+    <hr class="pack-divider" />
 
-        <div class="pack-section-title">✨ Incluye</div>
-        <ul class="pack-list">
-          <li>Masajes faciales profesionales</li>
-          <li>Mascarillas naturales según tu piel</li>
-          <li>Rutina personalizada + cuidado facial correcto</li>
-        </ul>
+    <div class="pack-actions">
+      <a class="btn btn-outline" href="details.html">Ver más detalles</a>
+      <a class="btn-whatsapp" href="https://wa.link/kp14zk" target="_blank" rel="noopener noreferrer">
+        💖 Quiero acceder ahora
+      </a>
+    </div>
+  </article>
 
-        <div class="pack-section-title">⏳ Duración</div>
-        <p class="pack-text"><strong>3 meses</strong> · <strong>Tú eliges tu horario</strong></p>
+</section>
 
-        <hr class="pack-divider" />
-        <a class="btn-whatsapp" href="https://wa.link/kp14zk" target="_blank" rel="noopener noreferrer">
-          💖 Quiero vivir esta experiencia
-        </a>
-      </article>
-
-      <!-- PAC 3 -->
-      <article class="pack-card">
-        <img src="img/pac_presencial.png" class="pack-img" alt="Clases presenciales" loading="lazy">
-
-        <div class="pack-top">
-          <div class="pack-label">PAC-3</div>
-          <div class="badge">Presencial</div>
-        </div>
-
-        <div class="pack-name">Clases presenciales</div>
-        <div class="pack-price">S/ 100 <span style="font-size:.95rem;color:var(--muted);font-weight:800;">• 2 meses</span></div>
-
-        <div class="pack-section-title">✨ Aprenderás</div>
-        <ul class="pack-list">
-          <li>Masajes para reafirmar y rejuvenecer</li>
-          <li>Preparación de mascarillas naturales</li>
-          <li>Rutinas completas de cuidado facial</li>
-        </ul>
-
-        <div class="pack-section-title">🎁 Bonos (gratis)</div>
-        <ul class="pack-list">
-          <li>Ingredientes de todas las mascarillas</li>
-          <li>Guía física de masajes faciales</li>
-          <li>Guía física con 20 recetas de mascarillas</li>
-        </ul>
-
-        <div class="pack-section-title">📅 Horario</div>
-        <p class="pack-text"><strong>Inicio:</strong> 22 de diciembre · <strong>Días:</strong> Lun • Miér • Vie · <strong>Hora:</strong> 4:00 PM</p>
-
-        <hr class="pack-divider" />
-        <a class="btn-whatsapp" href="https://wa.link/kp14zk" target="_blank" rel="noopener noreferrer">
-          💖 Quiero vivir esta experiencia
-        </a>
-      </article>
-
-      <!-- PAC 4 -->
-      <article class="pack-card">
-        <img src="img/pac_grabadas.png" class="pack-img" alt="Clases grabadas" loading="lazy">
-
-        <div class="pack-top">
-          <div class="pack-label">PAC-4</div>
-          <div class="badge">Grabadas</div>
-        </div>
-
-        <div class="pack-name">Clases grabadas (acceso inmediato)</div>
-        <div class="pack-price">S/ 30 <span style="font-size:.95rem;color:var(--muted);font-weight:800;">• 1 año</span></div>
-
-        <div class="pack-section-title">✨ Incluye</div>
-        <ul class="pack-list">
-          <li>3 videos de masajes faciales (10 min c/u)</li>
-          <li>1 video extra + 10 recetas de mascarillas caseras</li>
-          <li>Ebook digital con recetas paso a paso</li>
-        </ul>
-
-        <hr class="pack-divider" />
-        <a class="btn-whatsapp" href="https://wa.link/kp14zk" target="_blank" rel="noopener noreferrer">
-          💖 Quiero vivir esta experiencia
-        </a>
-      </article>
-
-    </section>
   </main>
 
   <footer>
