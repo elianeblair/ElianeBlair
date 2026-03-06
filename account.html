@@ -197,7 +197,7 @@
 </style>
 
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0b1220">
+  <meta name="theme-color" content="#f12585">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
 
@@ -268,42 +268,26 @@ header, .topbar, .nav{
 }
 
 </style>
-
 <style>
-/* PWA install button (FAB) */
-#installBtn{
-  position:fixed;
-  right:16px;
-  bottom:16px;
-  z-index:9999;
-  display:none;
-  align-items:center;
-  gap:8px;
-  padding:12px 14px;
-  border-radius:999px;
-  text-decoration:none;
-  font-weight:900;
-  color:#fff;
-  background: linear-gradient(135deg, #e11d8a, #fb7185);
-  box-shadow: 0 16px 30px rgba(225,29,138,.28);
-}
-#installBtn:active{ transform: translateY(1px); }
-#installHint{
-  position:fixed;
-  left:16px;
-  right:16px;
-  bottom:16px;
-  z-index:9998;
-  display:none;
-  padding:12px 14px;
-  border-radius:16px;
-  background: rgba(255,255,255,.90);
-  border: 1px solid rgba(243,210,230,.95);
-  color:#3b0a2a;
-  box-shadow: 0 18px 40px rgba(59,10,42,.14);
-  font-weight:700;
-}
+/* === Fix: eliminar fondos negros en Mis cursos + menú usuario (femenino) === */
+.hero{background:linear-gradient(135deg,rgba(255,255,255,.70),rgba(255,231,241,.62)) !important;border:1px solid rgba(243,210,230,.95) !important;box-shadow:0 18px 40px rgba(225,29,138,.12) !important;}
+.hero p{color:rgba(17,24,39,.70) !important;}
+.course,.course-card{background:rgba(255,255,255,.72) !important;border:1px solid rgba(243,210,230,.95) !important;box-shadow:0 18px 40px rgba(17,24,39,.10) !important;}
+.course:hover,.course-card:hover{border-color:rgba(225,29,138,.28) !important;box-shadow:0 22px 55px rgba(225,29,138,.16) !important;}
+.course-cover,.course-thumb{background:rgba(225,29,138,.05) !important;}
+.course-sub,.course-meta,.course-meta *{color:rgba(17,24,39,.70) !important;}
+.course-title,.course-meta .pill{color:rgba(59,10,42,.92) !important;}
+.pill{background:rgba(225,29,138,.10) !important;border:1px solid rgba(243,210,230,.95) !important;}
+.progress{background:rgba(17,24,39,.08) !important;border:1px solid rgba(243,210,230,.95) !important;}
+.progress>div{background:linear-gradient(90deg,#e11d8a,#fb7185) !important;}
+.user-dropdown{background:rgba(255,255,255,.95) !important;border:1px solid rgba(243,210,230,.95) !important;box-shadow:0 24px 60px rgba(225,29,138,.16) !important;}
+.dd-item:hover{background:rgba(225,29,138,.08) !important;}
+.dd-sep{background:rgba(243,210,230,.95) !important;}
+.user-trigger{background:rgba(255,255,255,.62) !important;border:1px solid rgba(243,210,230,.95) !important;box-shadow:0 10px 22px rgba(225,29,138,.10) !important;}
+body{color:var(--eb-text) !important;}
 </style>
+
+
 </head>
 <body>
   
@@ -523,57 +507,6 @@ list.innerHTML = cards;
     });
   }
 </script>
-
-<a id="installBtn" href="javascript:void(0)">📲 Instalar</a>
-<div id="installHint"></div>
-
-<script>
-/* PWA: botón Instalar
-   - Android/Chrome/Edge: usa beforeinstallprompt
-   - iOS Safari: muestra guía "Compartir → Añadir a pantalla de inicio"
-*/
-(function(){
-  const installBtn = document.getElementById("installBtn");
-  const installHint = document.getElementById("installHint");
-  let deferredPrompt = null;
-
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches
-    || window.navigator.standalone === true;
-
-  function showBtn(){ if (installBtn) installBtn.style.display = "inline-flex"; }
-  function hideBtn(){ if (installBtn) installBtn.style.display = "none"; }
-  function showHint(msg){ if (installHint){ installHint.textContent = msg; installHint.style.display = "block"; } }
-  function hideHint(){ if (installHint) installHint.style.display = "none"; }
-
-  // iOS: no beforeinstallprompt
-  if (isIOS && !isStandalone){
-    showHint("Para instalar: pulsa Compartir (⬆️) y elige “Añadir a pantalla de inicio”.");
-  }
-
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    hideHint();
-    showBtn();
-  });
-
-  window.addEventListener("appinstalled", () => {
-    deferredPrompt = null;
-    hideBtn();
-    hideHint();
-  });
-
-  if (installBtn){
-    installBtn.addEventListener("click", async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      try{ await deferredPrompt.userChoice; }catch(e){}
-      deferredPrompt = null;
-      hideBtn();
-    });
-  }
-})();
-</script>
 </body>
 </html>
+
