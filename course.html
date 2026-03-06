@@ -234,6 +234,7 @@
     }
 
     
+    
     @media (orientation: landscape) and (max-height: 700px){
       header{
         display:none !important;
@@ -400,15 +401,6 @@
       backdrop-filter:blur(10px) !important;
     }
 
-      .player-wrap{min-height:calc(100vh - 72px)}
-      .player{height:calc(100vh - 72px)}
-      #ccWrap{
-        left:10px;
-        right:10px;
-        bottom:12px;
-        padding:8px 10px;
-      }
-    }
   </style>
 </head>
 
@@ -821,29 +813,67 @@
     })();
   </script>
 
+  
   <script>
     (function(){
       const shield = document.getElementById("tapShield");
       const wrap = document.getElementById("ccWrap");
       let hideTimer = null;
 
+      function hideControls(){
+        if (!wrap) return;
+        wrap.classList.remove("is-visible");
+      }
+
       function showControls(){
         if (!wrap) return;
         wrap.classList.add("is-visible");
         if (hideTimer) clearTimeout(hideTimer);
-        hideTimer = setTimeout(() => wrap.classList.remove("is-visible"), 3200);
+        hideTimer = setTimeout(hideControls, 4000);
+      }
+
+      function resetHideTimer(){
+        if (hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(hideControls, 4000);
       }
 
       if (shield){
-        shield.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); showControls(); }, {passive:false});
-        shield.addEventListener("touchstart", (e) => { e.preventDefault(); e.stopPropagation(); showControls(); }, {passive:false});
+        shield.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          showControls();
+        }, {passive:false});
+
+        shield.addEventListener("touchstart", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          showControls();
+        }, {passive:false});
       }
 
       if (wrap){
-        wrap.addEventListener("pointerdown", () => { if (hideTimer) clearTimeout(hideTimer); });
-        wrap.addEventListener("pointerup", () => { showControls(); });
+        wrap.addEventListener("pointerdown", () => {
+          if (hideTimer) clearTimeout(hideTimer);
+        });
+
+        wrap.addEventListener("pointerup", () => {
+          resetHideTimer();
+        });
+
+        wrap.addEventListener("mousemove", () => {
+          if (wrap.classList.contains("is-visible")) resetHideTimer();
+        });
       }
+
+      document.addEventListener("fullscreenchange", () => {
+        showControls();
+      });
+
+      document.addEventListener("webkitfullscreenchange", () => {
+        showControls();
+      });
     })();
   </script>
+
 </body>
 </html>
