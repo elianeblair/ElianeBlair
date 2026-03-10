@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Curso</title>
+  <style>
+    :root{
+      --bg1:#fff7fb;
+      --bg2:#ffe7f1;
+      --panel:rgba(255,255,255,.78);
+      --panel2:rgba(255,255,255,.62);
+      --stroke:rgba(243,210,230,.95);
+      --text:#3b0a2a;
+      --muted:rgba(59,10,42,.68);
+      --accent:#e11d8a;
+      --accent2:#fb7185;
+      --gold:#d4a017;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% 10%, rgba(225,29,138,.14), transparent 60%),
+        radial-gradient(900px 500px at 90% 25%, rgba(251,113,133,.16), transparent 55%),
+        linear-gradient(180deg,var(--bg1),var(--bg2));
+    }
+    a{color:inherit}
+
+    header{
+      position:sticky;top:0;z-index:20;
+      padding:14px 16px;
+      border-bottom:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.64));
+      backdrop-filter: blur(10px);
+      display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+    }
+    #courseTitle{font-weight:1000;font-size:20px; letter-spacing:.3px}
+    .muted{color:var(--muted)}
+
+    .top-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .topbtn{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 12px;border-radius:14px;text-decoration:none;font-weight:900;
+      border:1px solid transparent;
+      box-shadow:0 10px 22px rgba(225,29,138,.12);
+    }
+    .secondary{
+      background:rgba(225,29,138,.10);
+      border-color:rgba(225,29,138,.22);
+      color:var(--accent);
+    }
+    .primary{
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#fff;border:0;cursor:pointer;
+      box-shadow:0 12px 26px rgba(225,29,138,.22);
+    }
+
+    .container{max-width:1080px;margin:0 auto;padding:14px 14px 28px}
+    .player-wrap{
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      overflow:hidden;
+      background:var(--panel2);
+      box-shadow:0 18px 40px rgba(59,10,42,.12);
+      position:relative;
+      isolation:isolate;
+    }
+    .player{
+      position:relative;
+      width:100%;
+      padding-top:56.25%;
+      background:rgba(59,10,42,.08);
+      overflow:hidden;
+    }
+    iframe{position:absolute;inset:0;width:100%;height:100%}
+
+    .player-meta{
+      display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
+      padding:12px 12px 12px;
+      border-top:1px solid var(--stroke);
+      background:rgba(255,255,255,.35);
+      position:relative;
+      z-index:3;
+    }
+    .player-meta .left{min-width:0;margin-top:22px !important;}
+    .player-meta .left .now{font-weight:900}
+    .player-meta .right{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+
+    .curriculum{
+      margin-top:14px;
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      overflow:hidden;
+      background:var(--panel2);
+      box-shadow:0 18px 40px rgba(59,10,42,.10);
+    }
+    .curriculum-h{
+      padding:14px 14px;
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+      border-bottom:1px solid var(--stroke);
+      background:rgba(255,255,255,.42);
+    }
+    .curriculum-h h2{margin:0;font-size:16px;letter-spacing:.2px}
+    .curriculum-h h2{color:var(--text)}
+    .curriculum-h .sub{font-size:12px;color:var(--muted)}
+    #modules{display:flex;flex-direction:column}
+
+    .mod{
+      width:100%;
+      text-align:left;
+      display:flex;gap:12px;align-items:center;
+      padding:12px 14px;
+      border:0;
+      background:transparent;
+      color:inherit;
+      cursor:pointer;
+      border-bottom:1px solid rgba(243,210,230,.9);
+    }
+    .mod:last-child{border-bottom:0}
+    .mod:hover{background:rgba(225,29,138,.06)}
+    .mod.active{
+      background:rgba(225,29,138,.10);
+      outline:2px solid rgba(225,29,138,.10);
+    }
+    .mod .thumb{
+      width:84px;aspect-ratio:16/9;border-radius:12px;overflow:hidden;
+      background:rgba(225,29,138,.05);flex:0 0 auto;
+      border:1px solid rgba(243,210,230,.95);
+    }
+    .mod .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .mod .info{min-width:0;flex:1}
+    .mod .info .t{margin:0;font-weight:900;font-size:14px;line-height:1.2}
+    .mod .info .s{margin:6px 0 0;font-size:12px;color:var(--muted)}
+    .err{color:#b91c1c;font-weight:800;white-space:pre-wrap;padding:12px 14px}
+
+    @media (max-width: 520px){
+      header{padding:12px 12px}
+      .container{padding:12px 12px 24px}
+      .mod .thumb{width:74px}
+    }
+    @media (min-width: 900px){
+      .container{
+        display:grid;
+        grid-template-columns: 1.45fr 1fr;
+        gap:14px;
+        align-items:start;
+      }
+      .curriculum{margin-top:0; max-height: calc(100vh - 94px); overflow:auto}
+    }
+
+    .user-menu{position:relative}
+    .user-trigger{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(225,29,138,.18);
+      background:rgba(255,255,255,.62);
+      color:inherit;font-weight:900;cursor:pointer;
+      box-shadow:0 10px 22px rgba(225,29,138,.10);
+    }
+    .avatar{
+      display:inline-flex;width:26px;height:26px;align-items:center;justify-content:center;
+      border-radius:999px;
+      background:rgba(225,29,138,.12);
+      border:1px solid rgba(225,29,138,.22)
+    }
+    .caret{opacity:.85}
+    .user-dropdown{
+      z-index:50;
+      position:absolute;right:0;top:calc(100% + 10px);
+      min-width:210px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.92);
+      backdrop-filter: blur(10px);
+      border-radius:14px;
+      box-shadow:0 24px 60px rgba(59,10,42,.18);
+      padding:8px;
+      display:none;
+    }
+    .user-dropdown.open{display:block}
+    .dd-item{
+      width:100%;
+      display:flex;align-items:center;gap:10px;
+      padding:10px 10px;border-radius:12px;
+      text-decoration:none;
+      border:0;background:transparent;color:inherit;
+      font-weight:900;cursor:pointer;text-align:left;
+    }
+    .dd-item:hover{background:rgba(225,29,138,.06)}
+    .dd-sep{height:1px;background:rgba(243,210,230,.9);margin:6px 4px}
+    .dd-item.danger{color:#b91c1c}
+
+    .yt-player{position:absolute; inset:0; width:100%; height:100%;}
+    .cc-wrap{display:flex; gap:10px; align-items:center; flex-wrap:nowrap;}
+    .cc-btn{
+      width:44px; height:38px;
+      border:0; border-radius:12px;
+      background:rgba(225,29,138,.12);
+      color:var(--text); font-size:18px;
+    }
+    .cc-btn:hover{background:rgba(225,29,138,.16)}
+    .cc-seek{ flex:1; min-width: 120px; accent-color: var(--accent); }
+    .cc-time{ font-variant-numeric: tabular-nums; opacity:.85; font-size: 13px; white-space: nowrap; }
+    .cc-speed{ width:56px !important; font-size:14px !important; }
+
+    .tap-shield{
+      position:absolute;left:0;top:0;right:0;height:100%;
+      z-index:50;background:transparent;pointer-events:auto;
+    }
+    #ccWrap{
+      position:absolute !important;
+      left:12px; right:12px; bottom:28px;
+      z-index:60;
+      opacity:0; transform: translateY(8px);
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    #ccWrap.is-visible{
+      opacity:1; transform: translateY(0);
+      pointer-events:auto;
+    }
+    #openYT{display:none !important;}
+
+    .player::after{
+      content:"";
+      position:absolute;
+      left:0; right:0; bottom:0;
+      height:110px;
+      background:linear-gradient(to top, rgba(59,10,42,.22), transparent);
+      pointer-events:none;
+      z-index:2;
+    }
+
+    
+    
+    @media (orientation: landscape) and (max-height: 700px){
+      header{
+        display:none !important;
+      }
+      body{
+        overflow:hidden;
+        background:#000 !important;
+      }
+      .container{
+        padding:0 !important;
+        margin:0 !important;
+        max-width:none !important;
+        display:block !important;
+      }
+      .curriculum{
+        display:none !important;
+      }
+      .player-wrap{
+        width:100vw !important;
+        height:100vh !important;
+        min-height:100vh !important;
+        border-radius:0 !important;
+        border:0 !important;
+        margin:0 !important;
+        box-shadow:none !important;
+        background:#000 !important;
+      }
+      .player{
+        width:100% !important;
+        height:100vh !important;
+        min-height:100vh !important;
+        padding-top:0 !important;
+        background:#000 !important;
+      }
+      .yt-player, iframe, #player{
+        position:absolute !important;
+        inset:0 !important;
+        width:100% !important;
+        height:100% !important;
+      }
+      .player-meta{
+        display:none !important;
+      }
+      #ccWrap{
+        left:12px !important;
+        right:12px !important;
+        bottom:14px !important;
+        z-index:70 !important;
+        padding:8px 10px;
+        border-radius:16px;
+        background:rgba(255,255,255,.82);
+        border:1px solid rgba(243,210,230,.95);
+        box-shadow:0 14px 32px rgba(59,10,42,.14);
+        backdrop-filter:blur(10px);
+      }
+      .cc-wrap{gap:8px}
+      .cc-btn{
+        width:42px;
+        height:38px;
+        border-radius:11px;
+      }
+      .cc-time{
+        font-size:12px;
+        color:var(--text);
+      }
+      .cc-seek{min-width:100px}
+    }
+
+    @media (orientation: landscape) and (max-height: 520px){
+      #ccWrap{
+        left:10px !important;
+        right:10px !important;
+        bottom:12px !important;
+      }
+    }
+
+    @media (orientation: portrait){
+      body{
+        overflow:auto !important;
+        background:
+          radial-gradient(1200px 600px at 10% 10%, rgba(225,29,138,.14), transparent 60%) !important,
+          radial-gradient(900px 500px at 90% 25%, rgba(251,113,133,.16), transparent 55%) !important,
+          linear-gradient(180deg,var(--bg1),var(--bg2)) !important;
+      }
+      header{
+        display:flex !important;
+      }
+      .container{
+        max-width:1080px !important;
+        margin:0 auto !important;
+        padding:14px 14px 28px !important;
+        display:block !important;
+      }
+      .player-wrap{
+        width:auto !important;
+        height:auto !important;
+        min-height:0 !important;
+        border:1px solid var(--stroke) !important;
+        border-radius:18px !important;
+        margin:0 !important;
+        box-shadow:0 18px 40px rgba(59,10,42,.12) !important;
+        background:var(--panel2) !important;
+      }
+      .player{
+        width:100% !important;
+        height:auto !important;
+        min-height:0 !important;
+        padding-top:56.25% !important;
+        background:rgba(59,10,42,.08) !important;
+      }
+      .curriculum{
+        display:block !important;
+        margin-top:14px !important;
+        max-height:none !important;
+        overflow:hidden !important;
+      }
+      .player-meta{
+        display:flex !important;
+      }
+      #ccWrap{
+        left:12px !important;
+        right:12px !important;
+        bottom:28px !important;
+        background:transparent !important;
+        border:0 !important;
+        box-shadow:none !important;
+        backdrop-filter:none !important;
+      }
+    }
+
+    .player-wrap:fullscreen,
+    .player-wrap:-webkit-full-screen{
+      width:100vw !important;
+      height:100vh !important;
+      border-radius:0 !important;
+      border:0 !important;
+      box-shadow:none !important;
+      background:#000 !important;
+    }
+    .player-wrap:fullscreen .player,
+    .player-wrap:-webkit-full-screen .player{
+      width:100% !important;
+      height:100vh !important;
+      min-height:100vh !important;
+      padding-top:0 !important;
+      background:#000 !important;
+    }
+    .player-wrap:fullscreen .player-meta,
+    .player-wrap:-webkit-full-screen .player-meta{
+      display:none !important;
+    }
+    .player-wrap:fullscreen #ccWrap,
+    .player-wrap:-webkit-full-screen #ccWrap{
+      left:12px !important;
+      right:12px !important;
+      bottom:14px !important;
+      z-index:999 !important;
+      opacity:1 !important;
+      transform:none !important;
+      pointer-events:auto !important;
+      background:rgba(255,255,255,.82) !important;
+      border:1px solid rgba(243,210,230,.95) !important;
+      box-shadow:0 14px 32px rgba(59,10,42,.14) !important;
+      backdrop-filter:blur(10px) !important;
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <div>
+      <div id="courseTitle">Cargando…</div>
+      <div id="nowPlaying" class="muted"></div>
+    </div>
+
+    <div class="top-actions">
+      <a class="topbtn secondary" href="account.html">⬅ Mis cursos</a>
+
+      <div class="user-menu" id="userMenu" style="display:none;">
+        <button class="user-trigger" id="userTrigger" aria-haspopup="menu" aria-expanded="false">
+          <span class="avatar" aria-hidden="true">👤</span>
+          <span id="userName">Cargando…</span>
+          <span class="caret" aria-hidden="true">▾</span>
+        </button>
+
+        <div class="user-dropdown" id="userDropdown" role="menu">
+          <a class="dd-item" href="account.html" role="menuitem">📚 Mis cursos</a>
+          <a class="dd-item" href="account.html" role="menuitem">👤 Mi perfil</a>
+          <div class="dd-sep"></div>
+          <button class="dd-item danger" id="logout" role="menuitem">🚪 Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="player-wrap" aria-label="Reproductor">
+      <div class="player">
+        <div id="player" class="yt-player"></div>
+        <div id="tapShield" class="tap-shield" aria-label="Zona protegida del video"></div>
+
+        <div class="cc-wrap" id="ccWrap" aria-label="Controles del video">
+          <button class="cc-btn" id="ccPlay" type="button" aria-label="Reproducir / Pausar">▶</button>
+          <input class="cc-seek" id="ccSeek" type="range" min="0" max="1000" value="0" aria-label="Línea de tiempo">
+          <span class="cc-time" id="ccTime">0:00 / 0:00</span>
+          <button class="cc-btn cc-speed" id="ccSpeedBtn" type="button" aria-label="Velocidad">1x</button>
+          <button class="cc-btn" id="ccFs" type="button" aria-label="Pantalla completa">⛶</button>
+        </div>
+      </div>
+
+      <div class="player-meta">
+        <div class="left">
+          <div class="now" id="nowTitle">Reproduciendo</div>
+        </div>
+        <div class="right">
+          <a class="smallbtn" id="openYT" href="#" target="_blank" rel="noopener">Ver en YouTube</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="curriculum" aria-label="Módulos">
+      <div class="curriculum-h">
+        <div>
+          <h2>Módulos</h2>
+          <div class="sub">Selecciona una clase para reproducir</div>
+        </div>
+        <div class="sub" id="countMods"></div>
+      </div>
+
+      <div id="modules"></div>
+      <div id="msg" class="err"></div>
+    </section>
+  </div>
+
+  <script>
+    let YTPlayer = null;
+    let YTReady = false;
+    let pendingVideoId = null;
+
+    function fmtTime_(sec){
+      sec = Math.max(0, Math.floor(sec || 0));
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return m + ":" + String(s).padStart(2, "0");
+    }
+
+    function normalizeVideoId_(value){
+      if (!value) return "";
+      const v = String(value).trim();
+      if (/^[a-zA-Z0-9_-]{11}$/.test(v)) return v;
+      const m = v.match(/(?:youtu\.be\/|v=|\/embed\/)([a-zA-Z0-9_-]{11})/);
+      return m ? m[1] : "";
+    }
+
+    function ensureYT_(){
+      if (document.getElementById("ytApiLoaded")) return;
+      const s = document.createElement("script");
+      s.id = "ytApiLoaded";
+      s.src = "https://www.youtube.com/iframe_api";
+      s.async = true;
+      document.head.appendChild(s);
+    }
+
+    function loadVideoById_(videoId, autoplay){
+      const vid = normalizeVideoId_(videoId);
+      if (!vid) return;
+      if (YTReady && YTPlayer && typeof YTPlayer.loadVideoById === "function"){
+        YTPlayer.loadVideoById({ videoId: vid, startSeconds: 0 });
+        if (autoplay) YTPlayer.playVideo();
+      } else {
+        pendingVideoId = vid;
+      }
+    }
+
+    function setupControls_(){
+      const btn = document.getElementById("ccPlay");
+      const seek = document.getElementById("ccSeek");
+      const time = document.getElementById("ccTime");
+      const fs = document.getElementById("ccFs");
+      const wrap = document.querySelector(".player-wrap");
+      let seeking = false;
+
+      const speedBtn = document.getElementById("ccSpeedBtn");
+      const speedRates = [0.5, 0.75, 1, 1.25, 1.5, 2];
+      let speedIdx = 2;
+
+      function applySpeed_(){
+        if (!YTPlayer) return;
+        const r = speedRates[speedIdx] || 1;
+        try{ YTPlayer.setPlaybackRate(r); }catch(e){}
+        if (speedBtn) speedBtn.textContent = (r % 1 === 0 ? String(r).replace('.0','') : String(r)) + "x";
+      }
+
+      if (speedBtn){
+        speedBtn.addEventListener("click", () => {
+          speedIdx = (speedIdx + 1) % speedRates.length;
+          applySpeed_();
+        });
+      }
+
+      if (btn){
+        btn.addEventListener("click", () => {
+          if (!YTPlayer) return;
+          const st = YTPlayer.getPlayerState();
+          if (st === 1) YTPlayer.pauseVideo();
+          else YTPlayer.playVideo();
+        });
+      }
+
+      if (seek){
+        seek.addEventListener("input", () => { seeking = true; });
+        seek.addEventListener("change", () => {
+          if (!YTPlayer) return;
+          const dur = YTPlayer.getDuration ? YTPlayer.getDuration() : 0;
+          const v = Number(seek.value || 0) / 1000;
+          if (dur > 0) YTPlayer.seekTo(dur * v, true);
+          seeking = false;
+        });
+      }
+
+      async function toggleFs(){
+        if (!wrap) return;
+        try{
+          const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+          if (isFs){
+            if (document.exitFullscreen) await document.exitFullscreen();
+            else if (document.webkitExitFullscreen) await document.webkitExitFullscreen();
+          } else {
+            if (wrap.requestFullscreen) await wrap.requestFullscreen();
+            else if (wrap.webkitRequestFullscreen) await wrap.webkitRequestFullscreen();
+          }
+        }catch(e){}
+      }
+      if (fs) fs.addEventListener("click", toggleFs);
+
+      setInterval(() => {
+        if (!YTPlayer) return;
+        if (seek && !seeking){
+          const dur = YTPlayer.getDuration ? YTPlayer.getDuration() : 0;
+          const cur = YTPlayer.getCurrentTime ? YTPlayer.getCurrentTime() : 0;
+          if (dur > 0){
+            seek.value = String(Math.round((cur / dur) * 1000));
+            if (time) time.textContent = fmtTime_(cur) + " / " + fmtTime_(dur);
+          }
+        }
+      }, 500);
+    }
+
+    window.onYouTubeIframeAPIReady = function(){
+      YTReady = true;
+
+      YTPlayer = new YT.Player("player", {
+        width: "100%",
+        height: "100%",
+        playerVars: {
+          controls: 0,
+          rel: 0,
+          modestbranding: 1,
+          iv_load_policy: 3,
+          playsinline: 1,
+          disablekb: 1,
+          fs: 0
+        },
+        events: {
+          onReady: () => {
+            setupControls_();
+            if (pendingVideoId){
+              loadVideoById_(pendingVideoId, false);
+              pendingVideoId = null;
+            }
+          },
+          onStateChange: (e) => {
+            const btn = document.getElementById("ccPlay");
+            if (!btn) return;
+            btn.textContent = (e.data === 1) ? "⏸" : "▶";
+          }
+        }
+      });
+    };
+
+    ensureYT_();
+  </script>
+
+  <script>
+    function escapeHtml_(s){
+      return String(s||"").replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+    }
+
+    const API_URL = "https://eliane-beautys-proxy-4wlw.vercel.app/api";
+
+    function jsonp(action, payload) {
+      return new Promise((resolve, reject) => {
+        const cb = "cb_" + Math.random().toString(36).slice(2);
+        const params = new URLSearchParams();
+        params.set("action", action);
+        Object.entries(payload || {}).forEach(([k,v]) => {
+          if (v === undefined || v === null) return;
+          params.set(k, String(v));
+        });
+        params.set("callback", cb);
+
+        const script = document.createElement("script");
+        script.src = API_URL + "?" + params.toString();
+        script.async = true;
+
+        window[cb] = (data) => { cleanup(); resolve(data); };
+
+        function cleanup() {
+          try { delete window[cb]; } catch(e) { window[cb] = undefined; }
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        script.onerror = () => { cleanup(); reject(new Error("No se pudo conectar (JSONP).")); };
+
+        document.body.appendChild(script);
+      });
+    }
+
+    const token = sessionStorage.getItem("pasir_token");
+    if (!token) location.href = "login.html";
+
+    const params = new URLSearchParams(location.search);
+    const courseId = params.get("courseId");
+
+    document.getElementById("logout").onclick = () => {
+      sessionStorage.removeItem("pasir_token");
+      sessionStorage.removeItem("pasir_email");
+      location.href = "index.html";
+    };
+
+    function setActive(btn) {
+      document.querySelectorAll(".mod").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+    function showError(text) {
+      document.getElementById("msg").textContent = text || "";
+    }
+
+    function pickModuleTitle_(m){
+      return (m && (m.title || m.moduleTitle || m.moduloTitle || m.nombre || "")) || "";
+    }
+    function pickModuleOrder_(m, idx){
+      const v = (m && (m.order ?? m.orden ?? m.nro ?? m.numero));
+      return (v !== undefined && v !== null && String(v).trim() !== "") ? v : (idx + 1);
+    }
+    function pickVideoId_(m){
+      return (m && (m.videoId || m.videoid || m.video || "")) || "";
+    }
+
+    (async () => {
+      if (!courseId) {
+        showError("Falta courseId en la URL. Ej: course.html?courseId=logo8-basico");
+        return;
+      }
+
+      const r = await jsonp("course", { token, courseId });
+      if (!r.ok) {
+        showError(r.error || "No se pudo cargar el curso.");
+        if ((r.error || "").toLowerCase().includes("no autorizado")) {
+          setTimeout(()=> location.href="account.html", 800);
+        }
+        return;
+      }
+
+      const courseTitle =
+        r.courseTitle ||
+        (r.course && (r.course.title || r.course.courseTitle)) ||
+        courseId;
+
+      document.getElementById("courseTitle").textContent = courseTitle;
+
+      const mods = Array.isArray(r.modules) ? r.modules : [];
+      document.getElementById("countMods").textContent = mods.length + " clases";
+
+      const box = document.getElementById("modules");
+      box.innerHTML = "";
+      showError("");
+
+      if (!mods.length){
+        showError("Este curso no tiene módulos cargados en la hoja Modules.");
+        return;
+      }
+
+      mods.forEach((m, idx) => {
+        const title = pickModuleTitle_(m);
+        const order = pickModuleOrder_(m, idx);
+        const videoId = pickVideoId_(m);
+
+        const thumb = videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : "icons/icon-192.png";
+
+        const b = document.createElement("button");
+        b.className = "mod";
+        b.innerHTML = `
+          <div class="thumb"><img src="${thumb}" alt=""></div>
+          <div class="info">
+            <p class="t">${escapeHtml_(`${order}. ${title || "Clase"}`)}</p>
+            <p class="s">Toca para reproducir</p>
+          </div>
+        `;
+
+        b.onclick = () => {
+          setActive(b);
+          loadVideoById_(videoId, false);
+          document.getElementById("nowPlaying").textContent = "Reproduciendo: " + (title || "Clase");
+          const nt = document.getElementById("nowTitle"); if (nt) nt.textContent = (title || "Reproduciendo");
+        };
+
+        box.appendChild(b);
+      });
+    })().catch(err => {
+      showError(err.message || String(err));
+    });
+  </script>
+
+  <script>
+    (function(){
+      const token = sessionStorage.getItem("pasir_token");
+      const userMenu = document.getElementById("userMenu");
+      const userTrigger = document.getElementById("userTrigger");
+      const userDropdown = document.getElementById("userDropdown");
+      const userNameEl = document.getElementById("userName");
+
+      function closeMenu(){
+        if (!userDropdown) return;
+        userDropdown.classList.remove("open");
+        if (userTrigger) userTrigger.setAttribute("aria-expanded","false");
+      }
+      function openMenu(){
+        if (!userDropdown) return;
+        userDropdown.classList.add("open");
+        if (userTrigger) userTrigger.setAttribute("aria-expanded","true");
+      }
+      if (userTrigger && userDropdown){
+        userTrigger.addEventListener("click", (e)=>{
+          e.stopPropagation();
+          userDropdown.classList.contains("open") ? closeMenu() : openMenu();
+        });
+        document.addEventListener("click", ()=> closeMenu());
+        document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeMenu(); });
+        userDropdown.addEventListener("click", (e)=> e.stopPropagation());
+      }
+
+      if (token && userMenu) userMenu.style.display = "inline-block";
+
+      async function hydrateUser(){
+        const storedEmail = sessionStorage.getItem("pasir_email");
+        if (storedEmail && userNameEl) userNameEl.textContent = storedEmail;
+        if (!token) return;
+        try{
+          const r = await jsonp("me", { token });
+          if (!r.ok) return;
+          const email =
+            (r.user && (r.user.email || r.user.correo)) ||
+            r.email ||
+            sessionStorage.getItem("pasir_email") ||
+            "—";
+
+          if (userNameEl) userNameEl.textContent = email;
+          sessionStorage.setItem("pasir_email", email);
+          if (userMenu) userMenu.style.display = "inline-block";
+        }catch(e){}
+      }
+      hydrateUser();
+
+      const logoutBtn = document.getElementById("logout");
+      if (logoutBtn){
+        logoutBtn.addEventListener("click", (e)=>{
+          e.preventDefault();
+          sessionStorage.removeItem("pasir_token");
+          sessionStorage.removeItem("pasir_email");
+          sessionStorage.removeItem("pasir_name");
+          location.href = "index.html";
+        });
+      }
+    })();
+  </script>
+
+  
+  <script>
+    (function(){
+      const shield = document.getElementById("tapShield");
+      const wrap = document.getElementById("ccWrap");
+      let hideTimer = null;
+
+      function hideControls(){
+        if (!wrap) return;
+        wrap.classList.remove("is-visible");
+      }
+
+      function showControls(){
+        if (!wrap) return;
+        wrap.classList.add("is-visible");
+        if (hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(hideControls, 4000);
+      }
+
+      function resetHideTimer(){
+        if (hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(hideControls, 4000);
+      }
+
+      if (shield){
+        shield.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          showControls();
+        }, {passive:false});
+
+        shield.addEventListener("touchstart", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          showControls();
+        }, {passive:false});
+      }
+
+      if (wrap){
+        wrap.addEventListener("pointerdown", () => {
+          if (hideTimer) clearTimeout(hideTimer);
+        });
+
+        wrap.addEventListener("pointerup", () => {
+          resetHideTimer();
+        });
+
+        wrap.addEventListener("mousemove", () => {
+          if (wrap.classList.contains("is-visible")) resetHideTimer();
+        });
+      }
+
+      document.addEventListener("fullscreenchange", () => {
+        showControls();
+      });
+
+      document.addEventListener("webkitfullscreenchange", () => {
+        showControls();
+      });
+    })();
+  </script>
+
+</body>
+</html>
