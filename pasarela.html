@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pasarela de Pago | Pasir</title>
+<link href="./Pasarela/index.css" rel="stylesheet"/>
+<style>
+    .payment-container{
+      width:min(100%, 720px) !important;
+      max-width:720px !important;
+      margin:0 auto !important;
+    }
+    #main-content{
+      max-width:100%;
+    }
+    .header{
+      padding-left:8px;
+      padding-right:8px;
+    }
+    #product-name{
+      font-size:clamp(1.45rem, 3.3vw, 2rem) !important;
+      line-height:1.18 !important;
+      text-align:center !important;
+      max-width:16ch;
+      margin:0 auto 8px auto !important;
+      word-break:break-word;
+    }
+    #product-desc{
+      text-align:center !important;
+      max-width:34ch;
+      margin:0 auto !important;
+    }
+    .product-info,
+    #product-info-box{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      padding-left:14px;
+      padding-right:14px;
+    }
+    .product-price,
+    #product-price{
+      width:100%;
+      text-align:center !important;
+      margin-left:auto !important;
+      margin-right:auto !important;
+    }
+    .whatsapp-float{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      width:58px;
+      height:58px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#25D366;
+      color:#fff;
+      text-decoration:none;
+      box-shadow:0 12px 28px rgba(0,0,0,.22);
+      z-index:9999;
+      transition:transform .2s ease, box-shadow .2s ease;
+      font-size:28px;
+    }
+    .whatsapp-float:hover{
+      transform:translateY(-2px) scale(1.04);
+      box-shadow:0 14px 32px rgba(0,0,0,.26);
+    }
+    .whatsapp-float-label{
+      position:fixed;
+      right:86px;
+      bottom:29px;
+      background:#111827;
+      color:#fff;
+      padding:9px 12px;
+      border-radius:999px;
+      font-size:.9rem;
+      line-height:1;
+      box-shadow:0 10px 22px rgba(0,0,0,.18);
+      z-index:9998;
+    }
+    @media (max-width: 640px){
+      .payment-container{
+        width:min(100%, 94vw) !important;
+      }
+      .whatsapp-float-label{
+        display:none;
+      }
+    }
+
+    .product-info{
+      display:flex !important;
+      justify-content:center !important;
+      text-align:center !important;
+    }
+    #product-price{
+      width:100%;
+      text-align:center !important;
+    }
+    .price-stack{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+    }
+    .price-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:4px 12px;
+      border-radius:999px;
+      background:#ef4444;
+      color:#fff;
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.03em;
+    }
+    .price-current{
+      color:var(--accent-color);
+      font-size:clamp(1.9rem, 4vw, 2.35rem);
+      font-weight:900;
+      line-height:1.05;
+      text-align:center;
+    }
+    .price-normal-label{
+      color:#111827;
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+    }
+    .price-normal{
+      color:#111827;
+      font-size:15px;
+      font-weight:700;
+      text-decoration:line-through;
+      line-height:1.1;
+    }
+
+  </style>
+<meta content="#f2f7ff" id="theme-color-meta" name="theme-color">
+<script id="pasir-theme-init">
+(function(){
+  try{
+    var saved = localStorage.getItem('pasir-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+  }catch(e){
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
+<style id="pasir-pasarela-dark-fix">
+html[data-theme="dark"] body{
+  background:#0b1220 !important;
+  color:#f8fafc !important;
+}
+html[data-theme="dark"] .payment-shell,
+html[data-theme="dark"] .payment-container,
+html[data-theme="dark"] #main-content,
+html[data-theme="dark"] .header,
+html[data-theme="dark"] .payment-details,
+html[data-theme="dark"] .method-btn,
+html[data-theme="dark"] .method-details{
+  background:#0f172a !important;
+  color:#f8fafc !important;
+  border-color:rgba(148,163,184,.22) !important;
+}
+html[data-theme="dark"] #product-name,
+html[data-theme="dark"] #product-desc,
+html[data-theme="dark"] .section-label,
+html[data-theme="dark"] .method-caption,
+html[data-theme="dark"] .method-strong,
+html[data-theme="dark"] .price-normal-label,
+html[data-theme="dark"] .price-normal{
+  color:#f8fafc !important;
+}
+html[data-theme="dark"] .whatsapp-float-label{
+  background:#f8fafc !important;
+  color:#0f172a !important;
+}
+html[data-theme="dark"] .price-current{
+  color:#86efac !important;
+}
+</style>
+<script defer="" src="theme.js"></script>
+</meta></head>
+<body>
+<div class="payment-shell">
+<div class="payment-container">
+<div class="loading-spinner hidden" id="loading">Validando producto...</div>
+<div id="main-content">
+<div class="header">
+<h1 id="product-name">NOMBRE DEL PRODUCTO</h1>
+<p id="product-desc">Virtual - Ilimitado - Didáctico</p>
+</div>
+<div class="product-info" id="product-info-box">
+<div class="product-price" id="product-price"><div class="price-stack"><span class="price-badge">Oferta !</span><span class="price-current">$16 USD</span><span class="price-normal-label">Precio normal</span><span class="price-normal">$22 USD</span></div></div>
+</div>
+<p class="section-label">Elige tu método de pago:</p>
+<div class="payment-methods">
+<button class="method-btn active" onclick="showMethod('yape', this)" type="button">Yape</button>
+<button class="method-btn" onclick="showMethod('binance', this)" type="button">Binance</button>
+<button class="method-btn" onclick="showMethod('paypal', this)" type="button">PayPal</button>
+<button class="method-btn" onclick="showMethod('Hotmart', this)" type="button">Hotmart</button>
+</div>
+<div class="method-details payment-details" id="method-yape">
+<div class="qr-container">
+<img alt="QR Yape" id="yape-qr" src="./Pasarela/yape-pasir-400x400.png"/>
+</div>
+<p class="method-caption">Escanea el código QR yapeando el monto exacto.</p>
+<p class="method-strong">Número: <span id="yape-number">935620240</span></p>
+<p class="method-strong">A nombre de: ELIANE PACHAS</p>
+<div class="copy-row">
+<button class="btn-copy" onclick="copyYapeNumber()" type="button">Copiar número Yape</button>
+</div>
+</div>
+<div class="method-details payment-details hidden" id="method-binance">
+<div class="qr-container">
+<img alt="QR Binance" id="binance-qr" src="./Pasarela/binance-anibal-400x400.png"/>
+</div>
+<p class="method-caption">Paga con Binance Pay ID o QR.</p>
+<p class="method-strong">ID: 1152183050</p>
+<p class="method-strong">Nickname: PASIR EDUCATION</p>
+</div>
+<div class="method-details payment-details hidden" id="method-paypal">
+<div style="margin: 28px 0 12px;">
+<a class="pay-link" href="https://www.paypal.com/paypalme/educacionPASIR/16" id="paypal-link">Pagar con PayPal</a>
+</div>
+<p class="method-caption">Serás redirigido a PayPal para completar el pago.</p>
+</div>
+<div class="method-details payment-details hidden" id="method-Hotmart">
+<div style="margin: 28px 0 12px;">
+<a class="pay-link" href="https://pay.hotmart.com/Q100218234T?off=tl43cids" id="Hotmart-link">Pagar con Hotmart</a>
+</div>
+<p class="method-caption">Serás redirigido a Hotmart para completar el pago.</p>
+</div>
+<button class="btn-submit" id="btn-show-form" onclick="
+    const productName = (currentProduct &amp;&amp; currentProduct.nombre) || document.getElementById('product-name').textContent.trim();
+    const whatsappURL = `https://api.whatsapp.com/send?phone=51935620240&text=${encodeURIComponent('Hola realicé el pago por este producto: ' + productName + ', envío mi comprobante')}`;
+    window.open(whatsappURL, '_blank');
+    " style="margin-top: 28px;" type="button">Enviar mi comprobante</button>
+<div class="verification-form" id="verification-form">
+<div class="order-box">Pedido: <span id="order-id">#000000</span></div>
+<h3 class="form-title" style="margin-top:18px;">Confirmar transacción</h3>
+<p class="helper-note">Completa tus datos y te abriremos WhatsApp con el mensaje listo para enviar.</p>
+<form id="payment-form">
+<div class="form-group">
+<label for="client-name">Tu nombre completo</label>
+<input id="client-name" placeholder="Ej. José López" required="" type="text"/>
+</div>
+<div class="form-group">
+<label for="client-email">Email para acceder al producto</label>
+<input id="client-email" placeholder="correo@ejemplo.com" required="" type="email"/>
+</div>
+<div class="form-group">
+<label for="txn-id">ID de transacción / operación</label>
+<input id="txn-id" placeholder="Ej. 123456789" required="" type="text"/>
+</div>
+<button class="btn-submit" id="submit-btn" type="submit">Enviar para verificación</button>
+</form>
+</div>
+<div id="success-msg">
+<h3>¡Casi listo!</h3>
+<p>Se abrió WhatsApp con tu mensaje preparado. Solo envíalo para verificar tu pago.</p>
+</div>
+<div id="error-msg"></div>
+<div style="margin-top: 20px; text-align: center;">
+<a class="btn-back" href="index.html">← Volver al catálogo</a>
+</div>
+</div>
+</div>
+</div>
+
+<a aria-label="WhatsApp de contacto" class="whatsapp-float" href="https://api.whatsapp.com/send?phone=51935620240&text=Hola%20tengo%20una%20consulta%20sobre%20un%20producto" target="_blank" title="Consultar por WhatsApp">💬</a>
+<script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzzdOjG80izEhJK8QMibSpHc8h2lMME-g6cIX6qFsmPS_Jx1mlME_ueo9qeuSU_WbnC/exec';
+    const WHATSAPP_NUMBER = '51935620240';
+    let currentProduct = null;
+    let currentOrderId = '';
+
+    function generateOrderId() {
+      return `#${Math.floor(100000 + Math.random() * 900000)}`;
+    }
+
+    function setOrderId() {
+      currentOrderId = generateOrderId();
+      const orderEl = document.getElementById('order-id');
+      if (orderEl) orderEl.textContent = currentOrderId;
+    }
+
+    function copyYapeNumber() {
+      const number = document.getElementById('yape-number')?.textContent?.trim() || '935620240';
+      navigator.clipboard.writeText(number).then(() => {
+        const btn = document.querySelector('.btn-copy');
+        if (!btn) return;
+        const original = btn.textContent;
+        btn.textContent = 'Número copiado';
+        setTimeout(() => btn.textContent = original, 1800);
+      }).catch(() => {
+        alert(`Copia manualmente este número: ${number}`);
+      });
+    }
+
+    function computeNormalAmount(baseAmount, explicitAmount) {
+      const explicit = Number(explicitAmount || 0);
+      if (explicit > 0) return explicit;
+      const base = Number(baseAmount || 0);
+      if (!(base > 0)) return 0;
+      const bumped = base * 1.35;
+      return bumped >= 100 ? Math.ceil(bumped) : Math.ceil(bumped * 100) / 100;
+    }
+
+    function getParamProduct() {
+      const params = new URLSearchParams(window.location.search);
+      const product = params.get('product');
+      if (!product) return null;
+      return {
+        nombre: product,
+        descripcion: params.get('desc') || 'Virtual - Ilimitado - Didáctico',
+        categoria: params.get('category') || '',
+        plan: params.get('plan') || '',
+        currency: params.get('currency') || 'USD',
+        precioMostrar: params.get('price') || '',
+        precioNormalMostrar: params.get('normal_price') || '',
+        amount: Number(params.get('amount') || 0),
+        normalAmount: Number(params.get('normal_amount') || 0),
+        precioPen: Number(params.get('pen') || 0),
+        precioUsd: Number(params.get('usd') || 0),
+        precio: Number(params.get('usd') || 0)
+      };
+    }
+
+    async function init() {
+      setOrderId();
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get('p');
+      const directProduct = getParamProduct();
+
+      if (directProduct) {
+        currentProduct = directProduct;
+        renderProduct(directProduct);
+        return;
+      }
+
+      if (!productId) {
+        showError('No se proporcionó información del producto.');
+        return;
+      }
+
+      document.getElementById('loading').classList.remove('hidden');
+
+      try {
+        const response = await fetch(`${API_URL}?p=${productId}`);
+        const data = await response.json();
+
+        if (data.error) {
+          showError('Producto no encontrado.');
+          return;
+        }
+
+        currentProduct = data;
+        renderProduct(data);
+      } catch (error) {
+        showError('Error de conexión con el servidor.');
+      } finally {
+        document.getElementById('loading').classList.add('hidden');
+      }
+    }
+
+    function renderProduct(p) {
+      const name = p.nombre || 'Producto';
+      const desc = p.descripcion || 'Virtual - Ilimitado - Didáctico';
+
+      // La pasarela usa como fuente principal exactamente la moneda/precio
+      // que ya calculó el index y que el usuario vio en la tarjeta.
+      let currentText = (p.precioMostrar || '').trim();
+      let normalText = (p.precioNormalMostrar || '').trim();
+      let amount = Number(p.amount || 0);
+      let normalAmount = Number(p.normalAmount || 0);
+      let currency = (p.currency || '').trim();
+
+      if (!currentText) {
+        const usd = Number(p.precioUsd || p.precio || 0);
+        const pen = Number(p.precioPen || 0);
+
+        if (currency === 'PEN' && pen > 0) {
+          amount = pen;
+          normalAmount = computeNormalAmount(pen, normalAmount);
+          currentText = `S/${pen}`;
+          normalText = `S/${normalAmount}`;
+        } else if (currency && currency !== 'USD' && amount > 0) {
+          currentText = `${amount} ${currency}`;
+          if (!normalText) {
+            normalAmount = computeNormalAmount(amount, normalAmount);
+            normalText = `${normalAmount} ${currency}`;
+          }
+        } else if (usd > 0) {
+          currency = 'USD';
+          amount = usd;
+          normalAmount = computeNormalAmount(usd, normalAmount);
+          currentText = `$${usd} USD`;
+          normalText = `$${normalAmount} USD`;
+        } else if (pen > 0) {
+          currency = 'PEN';
+          amount = pen;
+          normalAmount = computeNormalAmount(pen, normalAmount);
+          currentText = `S/${pen}`;
+          normalText = `S/${normalAmount}`;
+        } else {
+          currentText = 'Precio por confirmar';
+          normalText = '';
+        }
+      }
+
+      if (!currency) {
+        if (currentText.includes('S/')) currency = 'PEN';
+        else if (currentText.includes('USD') || currentText.includes('$')) currency = 'USD';
+        else currency = 'USD';
+      }
+
+      if (!normalText && amount > 0) {
+        const computedNormal = computeNormalAmount(amount, normalAmount);
+        normalAmount = computedNormal;
+        if (currency === 'PEN') normalText = `S/${computedNormal}`;
+        else if (currency === 'USD') normalText = `$${computedNormal} USD`;
+        else normalText = `${computedNormal} ${currency}`;
+      }
+
+      currentProduct = { ...p, amount, normalAmount, precioMostrar: currentText, precioNormalMostrar: normalText, currency };
+
+      document.getElementById('product-name').textContent = name;
+      document.getElementById('product-desc').textContent = desc;
+      document.getElementById('product-price').innerHTML = `
+        <div class="price-stack">
+          <span class="price-badge">Oferta !</span>
+          <span class="price-current">${currentText}</span>
+          ${normalText ? `<span class="price-normal-label">Precio normal</span><span class="price-normal">${normalText}</span>` : ''}
+        </div>
+      `;
+
+      const paypalAmount = amount > 0 ? amount : '';
+      document.getElementById('paypal-link').href = `https://www.paypal.com/paypalme/educacionPASIR/${paypalAmount}`;
+    }
+
+    function showError(msg) {
+      document.getElementById('product-info-box')?.classList.add('hidden');
+      const errorBox = document.getElementById('error-msg');
+      errorBox.style.display = 'block';
+      errorBox.textContent = msg;
+    }
+
+    function showMethod(method, button) {
+      document.querySelectorAll('.method-details').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.method-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(`method-${method}`).classList.remove('hidden');
+      if (button) button.classList.add('active');
+    }
+
+    function toggleForm() {
+      const form = document.getElementById('verification-form');
+      form.style.display = 'block';
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('btn-show-form').style.display = 'none';
+    }
+
+    document.getElementById('payment-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Abriendo WhatsApp...';
+
+      const name = document.getElementById('client-name').value.trim();
+      const email = document.getElementById('client-email').value.trim();
+      const txnId = document.getElementById('txn-id').value.trim();
+      const productName = currentProduct?.nombre || document.getElementById('product-name').textContent.trim() || 'Producto';
+
+      const amountText = currentProduct?.precioMostrar || 'Monto por confirmar';
+
+      const message = `Hola realicé el pago por este producto: ${productName}
+Pedido: ${currentOrderId}
+Nombre: ${name}
+Correo: ${email}
+Monto pagado: ${amountText}
+ID de Transacción / Operación: ${txnId}
+
+Adjunto comprobante.`;
+      const whatsappURL = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(message)}`;
+
+      window.open(whatsappURL, '_blank');
+
+      document.getElementById('verification-form').style.display = 'none';
+      const successBox = document.getElementById('success-msg');
+      successBox.innerHTML = `<h3>¡Casi listo!</h3><p>Se abrió WhatsApp con tu mensaje preparado. Pedido: <strong>${currentOrderId}</strong></p>`;
+      successBox.style.display = 'block';
+      successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      btn.disabled = false;
+      btn.textContent = 'Enviar para verificación';
+    });
+
+    init();
+  </script>
+<script>
+function getParamProduct() {
+  const params = new URLSearchParams(window.location.search);
+  const product = params.get('product');
+  if(!product) return null;
+  const price = params.get('price') || 'Precio por confirmar';
+  const normal_price = params.get('normal_price') || '';
+  return {
+    nombre: product,
+    descripcion: params.get('desc') || 'Virtual - Ilimitado - Didáctico',
+    precioMostrar: price.trim(),
+    precioNormalMostrar: normal_price.trim(),
+    currency: price.slice(0,2).includes('S/') ? 'PEN' : 'USD'
+  };
+}
+
+async function init() {
+  setOrderId();
+  const directProduct = getParamProduct();
+  if(directProduct) {
+    currentProduct = directProduct;
+    renderProduct(directProduct);
+  } else {
+    showError('No se proporcionó información del producto.');
+  }
+}
+
+function renderProduct(p) {
+  const name = p.nombre || 'Producto';
+  const desc = p.descripcion || 'Virtual - Ilimitado - Didáctico';
+  const currentText = p.precioMostrar || 'Precio por confirmar';
+  const normalText = p.precioNormalMostrar || '';
+
+  document.getElementById('product-name').textContent = name;
+  document.getElementById('product-desc').textContent = desc;
+  document.getElementById('product-price').innerHTML = `
+    <div class="price-stack">
+      <span class="price-badge">Oferta !</span>
+      <span class="price-current">${currentText}</span>
+      ${normalText ? `<span class="price-normal-label">Precio normal</span><span class="price-normal">${normalText}</span>` : ''}
+    </div>`;
+
+  // Actualizar enlace PayPal con valor numérico
+  let numericAmount = parseFloat(currentText.replace(/[^0-9\.]/g,''));
+  document.getElementById('paypal-link').href = `https://www.paypal.com/paypalme/educacionPASIR/${numericAmount || ''}`;
+}
+
+init();
+</script>
+<script>
+const paypalEl = document.getElementById('paypal-link');
+if(paypalEl){
+    const priceText = (currentProduct && currentProduct.precioMostrar) || document.getElementById('product-price').textContent;
+    let numericPrice = parseFloat(priceText.replace(/[^0-9\.]/g,''));
+    if(!isNaN(numericPrice)){
+        numericPrice = (numericPrice / 2.8).toFixed(2);
+        paypalEl.href = `https://www.paypal.com/paypalme/educacionPASIR/${numericPrice}`;
+    }
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // Eliminar cualquier botón flotante previo
+  document.querySelectorAll('.whatsapp-float').forEach(btn => btn.remove());
+
+  // Crear botón flotante con SVG
+  const floatBtn = document.createElement('a');
+  floatBtn.href = 'https://api.whatsapp.com/send?phone=51935620240&text=' + encodeURIComponent('Hola, deseo adquirir un producto');
+  floatBtn.target = '_blank';
+  floatBtn.className = 'whatsapp-float';
+  floatBtn.style.cssText = 'position:fixed;right:18px;bottom:18px;width:58px;height:58px;z-index:9999;';
+
+  const img = document.createElement('img');
+  img.src = 'img/whats.svg';
+  img.alt = 'WhatsApp';
+  img.style.width = '100%';
+  img.style.height = '100%';
+
+  floatBtn.appendChild(img);
+  document.body.appendChild(floatBtn);
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // Eliminar flotantes previos
+  document.querySelectorAll('.whatsapp-float').forEach(btn => btn.remove());
+
+  // Botón flotante WhatsApp igual al de la página principal
+  const floatBtn = document.createElement('a');
+  floatBtn.href = 'https://api.whatsapp.com/send?phone=51935620240&text=' + encodeURIComponent('Hola, deseo adquirir un producto');
+  floatBtn.target = '_blank';
+  floatBtn.className = 'whatsapp-float';
+  floatBtn.style.cssText = 'position:fixed;right:18px;bottom:18px;width:auto;height:58px;padding:0 12px;border-radius:28px;display:flex;align-items:center;justify-content:center;background:#25D366;color:#fff;font-size:16px;font-weight:700;gap:8px;box-shadow:0 12px 28px rgba(0,0,0,.22);text-decoration:none;';
+
+  const img = document.createElement('img');
+  img.src = 'img/whats.svg';
+  img.alt = 'WhatsApp';
+  img.style.width = '32px';
+  img.style.height = '32px';
+
+  const span = document.createElement('span');
+  span.textContent = 'Consultas';
+
+  floatBtn.appendChild(img);
+  floatBtn.appendChild(span);
+  document.body.appendChild(floatBtn);
+});
+</script>
+
+
+
+
+<!-- MEJORAS LYY FINAL: WhatsApp compatible TikTok + botones abajo sin tapar contenido -->
+<style id="lyy-final-fixes-style">
+  .whatsapp-float{
+    position:fixed !important;
+    right:18px !important;
+    bottom:90px !important;
+    width:auto !important;
+    height:58px !important;
+    padding:0 14px !important;
+    border-radius:999px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:8px !important;
+    background:#25D366 !important;
+    color:#fff !important;
+    font-size:16px !important;
+    font-weight:900 !important;
+    box-shadow:0 14px 32px rgba(0,0,0,.25) !important;
+    text-decoration:none !important;
+    z-index:9999 !important;
+  }
+  .whatsapp-float img{width:32px !important;height:32px !important;display:block !important;}
+  #installHint{display:none !important;}
+  #installBtn{
+    left:18px !important;
+    right:auto !important;
+    bottom:90px !important;
+    z-index:9998 !important;
+  }
+  @media (max-width:480px){
+    .whatsapp-float{right:12px !important;bottom:88px !important;height:54px !important;padding:0 12px !important;font-size:15px !important;}
+    .whatsapp-float img{width:30px !important;height:30px !important;}
+    #installBtn{left:12px !important;bottom:88px !important;}
+  }
+</style>
+
+<script id="lyy-final-pasarela-script">
+(function(){
+  const PHONE = '51935620240';
+
+  function enc(text){ return encodeURIComponent(text || 'Hola, deseo adquirir un producto'); }
+  function apiWhats(text){ return `https://api.whatsapp.com/send?phone=${PHONE}&text=${enc(text)}`; }
+  function androidIntent(text){ return `intent://send?phone=${PHONE}&text=${enc(text)}#Intent;scheme=smsto;package=com.whatsapp;end`; }
+
+  window.openWhatsAppLYY = function(text){
+    const ua = navigator.userAgent || '';
+    const isAndroid = /Android/i.test(ua);
+    const isIOS = /iPhone|iPad|iPod/i.test(ua);
+    if(isAndroid){
+      window.location.href = androidIntent(text);
+      setTimeout(function(){ window.location.href = apiWhats(text); }, 1200);
+      return;
+    }
+    if(isIOS){
+      window.location.href = apiWhats(text);
+      return;
+    }
+    window.open(apiWhats(text), '_blank', 'noopener');
+  };
+
+  // Botón "Enviar mi comprobante" sin wa.me, compatible con TikTok.
+  document.addEventListener('click', function(e){
+    const payBtn = e.target.closest('#btn-show-form');
+    if(payBtn){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const productName = (window.currentProduct && window.currentProduct.nombre) || document.getElementById('product-name')?.textContent?.trim() || 'Producto';
+      openWhatsAppLYY('Hola realicé el pago por este producto: ' + productName + ', envío mi comprobante');
+    }
+  }, true);
+
+  // Formulario de verificación, si se usa, también abre con api.whatsapp.com.
+  document.addEventListener('submit', function(e){
+    const form = e.target.closest('#payment-form');
+    if(!form) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    const name = document.getElementById('client-name')?.value?.trim() || '';
+    const email = document.getElementById('client-email')?.value?.trim() || '';
+    const txnId = document.getElementById('txn-id')?.value?.trim() || '';
+    const productName = (window.currentProduct && window.currentProduct.nombre) || document.getElementById('product-name')?.textContent?.trim() || 'Producto';
+    const amountText = (window.currentProduct && window.currentProduct.precioMostrar) || document.getElementById('product-price')?.textContent?.replace(/\s+/g,' ')?.trim() || 'Monto por confirmar';
+    const order = document.getElementById('order-id')?.textContent?.trim() || '';
+    const message = `Hola realicé el pago por este producto: ${productName}\nPedido: ${order}\nNombre: ${name}\nCorreo: ${email}\nMonto pagado: ${amountText}\nID de Transacción / Operación: ${txnId}\n\nAdjunto comprobante.`;
+    openWhatsAppLYY(message);
+  }, true);
+
+  function rebuildFloat(){
+    document.querySelectorAll('.whatsapp-float').forEach(btn => btn.remove());
+    const floatBtn = document.createElement('a');
+    floatBtn.href = apiWhats('Hola, deseo adquirir un producto');
+    floatBtn.target = '_blank';
+    floatBtn.rel = 'noopener noreferrer';
+    floatBtn.className = 'whatsapp-float';
+    floatBtn.setAttribute('aria-label','Consultas por WhatsApp');
+    floatBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      openWhatsAppLYY('Hola, deseo adquirir un producto');
+    });
+    const img = document.createElement('img');
+    img.src = 'img/whats.svg';
+    img.alt = 'WhatsApp';
+    const span = document.createElement('span');
+    span.textContent = 'Consultas';
+    floatBtn.appendChild(img);
+    floatBtn.appendChild(span);
+    document.body.appendChild(floatBtn);
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){ setTimeout(rebuildFloat, 100); });
+  window.addEventListener('load', function(){ setTimeout(rebuildFloat, 300); });
+})();
+</script>
+
+</body>
+</html>
